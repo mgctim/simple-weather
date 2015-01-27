@@ -1,7 +1,7 @@
 	//We'll initialize in London, because it is far away from Milwaukee. 
 	var url = ""; 
 	var request = new XMLHttpRequest();
-	var debugLocation = true;
+	var debugLocation = false;
 	var debugUrl = false;
 	var unitString = "imperial"; //Default to Imperial units, as most of our end users at Corvisa likely prefer it.
 	var unitDisplay = "° F"; //How temperature units will be displayed
@@ -22,12 +22,6 @@
 				
 	//these two functions are used to make the city search grey out and to make it
 	//more clear that the text box is not being used for search.
-	function inputFocus(i){
-		if(i.value==i.defaultValue){ i.value=""; i.style.color="#000"; }
-	}
-	function inputBlur(i){
-		if(trim(i.value)==""){ i.value=i.defaultValue; i.style.color="#888"; }
-	}
 		
 	function trim (str) {
 		return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
@@ -38,15 +32,34 @@
 			loadWeatherData();
 			return false;
 		});		
+		loadGeoData();
+		//these two functions are used to make the city search grey out and to make it
+		//more clear that the text box is not being used for search.				
+		$("#citySearch").focus( function(){
+			var i = this;		
+			if(this.className.indexOf(" blur") > -1){
+				$("#citySearch").removeClass("blur");
+			}
+			i.className+=" focus";
+			if(i.value === i.defaultValue){ i.value="";}
+		})
+		$("#citySearch").blur( function(){		
+			var i = this;
+			if(this.className.indexOf(" focus") > -1){						
+				$("#citySearch").removeClass("focus");
+			}
+			i.className+=" blur";
+			if(trim(i.value) === ""){ i.value=i.defaultValue;}
+		})
 	})		
 		
-	//If we're going to be asking for location data we should do it as the page loads.
-	window.onload = loadGeoData; 
+	//If we're going to be asking for location data we should do it immediately:	
+	
 			
 	function loadGeoData() {
 	// We need to check if the browser has the correct capabilities.
 		textBox = document.getElementById("citySearch");
-		if (textBox.value != textBox.defaultValue){
+		if (textBox.value !== textBox.defaultValue){
 			loadWeatherData();
 			return;
 		}								
@@ -124,8 +137,8 @@
 			};
 		}
 		
-		function setUrl(){
-			if (!savedPosition && textBox.value==textBox.defaultValue){
+		function setUrl(){ 
+			if (!savedPosition && textBox.value === textBox.defaultValue){
 			document.getElementById("h01").innerHTML = "Please enter or share a location";
 			}
 			if (document.getElementById("degC").checked) {
@@ -136,18 +149,18 @@
 				unitString = "imperial";		
 				unitDisplay = "° F";	
 			}
-			if (unitString != "metric" && unitString != "imperial"){
+			if (unitString !== "metric" && unitString !== "imperial"){
 			//This will never evaluate to true in this incarnation, but may save headaches in the future.
 				document.getElementById("tempDisplay").innerHTML = 'Something has gone wrong with temperature units, "' + unitString + '" is not valid.';
 			}
-			if (textBox.value == textBox.defaultValue && savedPosition){
+			if (textBox.value === textBox.defaultValue && savedPosition){
 				var positionUrl = "lat=" + savedPosition.coords.latitude + "&lon=" + savedPosition.coords.longitude;
 			}
 			else {
 				var positionUrl = "q=" + textBox.value + "&mode=json";
 			}
 			var unitsUrl = "&units=" + unitString;
-			if (numDaysToForecast == 0) { //if we just want current weather go for it.
+			if (numDaysToForecast === 0) { //if we just want current weather go for it.
 				url = "http://api.openweathermap.org/data/2.5/weather?" + positionUrl + unitsUrl + appIdString;
 			}
 			else { //otherwise just grab the daily, and all 14 of them. We will prune what we show later for 5-day.
@@ -162,7 +175,7 @@
 		
 		function checkCache(){
 			for (i = 0; i < cachedWeather.length; i++){
-				if (cachedWeather[i].url == url){
+				if (cachedWeather[i].url === url){
 					weatherActive = cachedWeather[i].weather;
 					showWeather();
 					return true;
@@ -177,7 +190,7 @@
 		function showWeather(){				
 			$(".generated").remove();					
 			if(verifyResponse()) {
-				if (numDaysToForecast == 0){
+				if (numDaysToForecast === 0){
 					displayCurrentWeather();
 				}
 				else{
@@ -193,7 +206,7 @@
 				setHeadline();
 				return true;						
 			}
-			else if (weatherActive.cod == "404"){
+			else if (weatherActive.cod === "404"){
 				document.getElementById("h01").innerHTML = "This city does not seem to exist. Please try again.";
 				return false;
 			}
@@ -210,7 +223,7 @@
 				}
 			var startOfHeadline = "Weather in ";
 			var capsSearchString = toTitleCase($("#citySearch").val());
-			if (numDaysToForecast == 0) {
+			if (numDaysToForecast === 0) {
 				if (!weatherActive.name){ //if the search was not for a city, use the search text for the headline
 					document.getElementById("h01").innerHTML = startOfHeadline + capsSearchString			
 				}
@@ -257,7 +270,7 @@
 				'<div class="center description generated">' + weatherActive.list[dateIndex].weather[0].main + '</div>' +
 			'</div>'
 			);
-			if (i != numDaysToForecast) {
+			if (i !== numDaysToForecast) {
 				$("#weatherData").append ( 
 				'<br class="generated">'
 				)
