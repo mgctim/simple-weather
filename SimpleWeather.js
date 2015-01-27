@@ -11,14 +11,14 @@
 	var weatherActive = {}; //Same for weather
 	//Used to make intuitive forecasting date display:
 	var date = new Date();
-	var weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday",
-	"Friday","Saturday"]
+	var weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 	var cachedWeather = []; //Store weather data to cut down on api pings.
 	var dayToday = weekdays[date.getDay()];
 	var dateToday = date.getDate();
 	var monthToday = date.getMonth();
 	//var avg; //we're going to average the morning, day, evening, and night temps to get an average temp and add it into the forecast data.
-	var textBox = {}
+	var textBox = {};
+	var localWeatherValue = "";
 	var appIdString = ""//"&APPID=9006d05a589c4fa48d3f4eae5fa93adc" //This App's ID in the openweather API... it tends to slow things down in my testing.
 				
 	//these two functions are used to make the city search grey out and to make it
@@ -29,11 +29,17 @@
 	}
 
 	$( document ).ready( function() {
+		textBox = document.getElementById("citySearch");
+		localWeatherValue = textBox.getAttribute("data-placeholder");	
+		alert(localWeatherValue);
 		$("#searchForm").submit(function() {
 			loadWeatherData();
 			return false;
 		});		
 		loadGeoData();
+		$(".chosen-select").chosen({
+			no_results_text: "Add this search!"
+		})
 		//these two functions are used to make the city search grey out and to make it
 		//more clear that the text box is not being used for search.				
 		$("#citySearch").focus( function(){
@@ -52,6 +58,8 @@
 			i.className+=" blur";
 			if(trim(i.value) === ""){ i.value=i.defaultValue;}
 		})
+		$(".loadsWeatherData").click( loadWeatherData());
+		
 	})		
 		
 	//If we're going to be asking for location data we should do it immediately:	
@@ -59,7 +67,6 @@
 			
 	function loadGeoData() {
 	// We need to check if the browser has the correct capabilities.
-		textBox = document.getElementById("citySearch");
 		if (textBox.value !== textBox.defaultValue){
 			loadWeatherData();
 			return;

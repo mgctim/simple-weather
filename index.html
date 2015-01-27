@@ -9,7 +9,9 @@
 		<!--while jquery is useful for almost everything, I am using it primarily to script forecasting-->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>		
 		<link rel = "stylesheet" type = "text/css" href ="./styleSheet.css"/>
-		<link rel = "icon" href="favicon.ico">
+		<link rel="stylesheet" href="chosen.css">
+		<link rel = "icon" href="favicon.ico">		
+		<script src="chosen.jquery.js"></script>
 		<script src="SimpleWeather.js"></script>	
 	</head>
 
@@ -19,17 +21,19 @@
 		<h1 id="h01" class="center">Share your location for weather here and now!</h1> 
 		<p id="urlDiv" class="inactive"><p>
 		<div class="center control">
-				<input type="radio" id="degF" name = "tempUnit" onclick="loadWeatherData();" checked>°F  
-				<input type="radio" id="degC" name = "tempUnit" onclick="loadWeatherData();" >°C
+				<input type="radio" id="degF" name = "tempUnit" class = "loadsWeatherData" onclick="loadWeatherData();" checked>°F  
+				<input type="radio" id="degC" name = "tempUnit" class = "loadsWeatherData" onclick="loadWeatherData();" >°C
 			<div class="center">
-				<input type="radio" id="forecast0" name = "forecast" onclick="numDaysToForecast = 0; loadWeatherData();" checked>Current Weather 
-				<input type="radio" id="forecast5" name = "forecast" onclick="numDaysToForecast = 4; loadWeatherData();" >Five Day Forecast
-				<input type="radio" id="forecast14" name = "forecast" onclick="numDaysToForecast = 13; loadWeatherData();" >Two Week Forecast
+				<input type="radio" id="forecast0" name = "forecast" class = "loadsWeatherData" onclick="numDaysToForecast = 0;  loadWeatherData();" checked>Current Weather 
+				<input type="radio" id="forecast5" name = "forecast" class = "loadsWeatherData" onclick="numDaysToForecast = 4; loadWeatherData();" >Five Day Forecast
+				<input type="radio" id="forecast14" name = "forecast" class = "loadsWeatherData" onclick="numDaysToForecast = 13; loadWeatherData();" >Two Week Forecast
 			</div>
 			<form id="searchForm" action="search" method="post" class="center">
-				<input type="search" id="citySearch" namestyle="color:#888;" 
-				value="Search By City Name!" class="searchBox"/>
-				<input type ="submit" onclick = "loadWeatherData();" value="Go!"/>
+			<!--	<input type="search" id="citySearch" namestyle="color:#888;" value="Search By City Name!" class="searchBox"/> -->
+				<select data-placeholder="Please enter or share a location..." id="citySearch" style="width:350px;" tabindex="1" class = "chosen-select">				
+				<option value="Local Weather">Local Weather</option>
+				</select
+				<!--><input type ="submit" onclick = "loadWeatherData();" value="Go!"/></-->
 			</form>
 			</div>
 		<br>
