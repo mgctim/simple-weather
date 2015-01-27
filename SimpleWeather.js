@@ -3,6 +3,7 @@
 	var request = new XMLHttpRequest();
 	var debugLocation = false;
 	var debugUrl = false;
+	var debugCache = false;
 	var unitString = "imperial"; //Default to Imperial units, as most of our end users at Corvisa likely prefer it.
 	var unitDisplay = "° F"; //How temperature units will be displayed
 	var numDaysToForecast = 0; //Number of days to forecast
@@ -18,7 +19,7 @@
 	var monthToday = date.getMonth();
 	//var avg; //we're going to average the morning, day, evening, and night temps to get an average temp and add it into the forecast data.
 	var textBox = {}
-	var appIdString = ""//"&APPID=9006d05a589c4fa48d3f4eae5fa93adc" //This App's ID.
+	var appIdString = ""//"&APPID=9006d05a589c4fa48d3f4eae5fa93adc" //This App's ID in the openweather API... it tends to slow things down in my testing.
 				
 	//these two functions are used to make the city search grey out and to make it
 	//more clear that the text box is not being used for search.
@@ -76,8 +77,9 @@
 			// If the browser isn't geo-capable, tell the user.
 			document.getElementById("georesults").innerHTML = ('<p>Your browser does not support geolocation.</p>');
 
-		}
-
+		}		
+	}
+	//Functions that were used in loadGeoData:
 		function errorPosition() {
 			document.getElementById("georesults").innerHTML = ('<p>The page could not get your location.</p>');
 		}
@@ -114,7 +116,7 @@
 			};
 		var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 		}
-	}
+	//End of loadGeoData functions
 						
 	function loadWeatherData(){
 		setUrl();
@@ -134,9 +136,11 @@
 			request.onerror = function() {
 			  // There was a connection error of some sort
 			  document.getElementById("tempDisplay").innerHTML = "There was a connection error :(.";
-			};
+			};		
+			request.send();
 		}
-		
+	}
+
 		function setUrl(){ 
 			if (!savedPosition && textBox.value === textBox.defaultValue){
 			document.getElementById("h01").innerHTML = "Please enter or share a location";
@@ -174,8 +178,9 @@
 		}
 		
 		function checkCache(){
-			for (i = 0; i < cachedWeather.length; i++){
-				if (cachedWeather[i].url === url){
+			for (i = 0; i < cachedWeather.length - 1; i++){
+				if (cachedWeather[i].url === url){				
+					if (debugCache){alert(cachedWeather[i].url);}
 					weatherActive = cachedWeather[i].weather;
 					showWeather();
 					return true;
@@ -184,7 +189,10 @@
 		}
 		
 		function setCache(){
-		
+			cachedWeather[cachedWeather.length] = {};
+			cachedWeather[cachedWeather.length - 1].weather = weatherActive;
+			cachedWeather[cachedWeather.length - 1].url = url;
+			if (debugCache){alert(cachedWeather.length - 1 + " " + cachedWeather[cachedWeather.length - 1].url);}
 		}
 		
 		function showWeather(){				
@@ -276,6 +284,3 @@
 				)
 			}
 		}
-		
-		request.send();
-	}		
